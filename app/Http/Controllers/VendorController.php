@@ -33,6 +33,7 @@ class VendorController extends Controller
 
     public function VendorId($id)
     {
+        $vendor = null;
         $users = Cookie::get('users');
         if ($users != null) {
             $users = json_decode($users);

@@ -108,10 +108,15 @@ class LoginController extends Controller
             if ($username == $user->username && $password == $user->password) {
                 $id = $user->username;
                 if ($user->type == "vendor") {
-                    return redirect()->route('vendor', ['id' => $id]);
+                    if ($user->blocked == false) {
+                        return redirect()->route('vendor', ['id' => $id]);
+                    }
+
                 }
                 else {
-                    return redirect()->route('user', ['id' => $id]);
+                    if ($user->blocked == false) {
+                        return redirect()->route('user', ['id' => $id]);
+                    }
                 }
 
 
