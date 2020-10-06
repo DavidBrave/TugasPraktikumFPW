@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Schema;
 
 
 class LoginController extends Controller
@@ -28,6 +29,7 @@ class LoginController extends Controller
 
     public function Register(Request $request)
     {
+
         $username = $request->input("username");
         $password = $request->input("password");
         $confirm = $request->input("confirmation");
@@ -36,31 +38,45 @@ class LoginController extends Controller
         $address = $request->input("address");
         $description = $request->input("description");
         $type = $request->get('vendor', "user");
+
+
         if ($type != "user") {
             $type = "vendor";
         }
         $false = false;
         $true = true;
 
+        $users = Cookie::get('users');
+        if ($users == null) {
+            $users = [];
+            $users = json_encode($users);
+        }
+
+        $users = json_decode($users);
+
+        foreach ($users as $user) {
+            if ($username == $user->username) {
+                return redirect()->back()->withInput()->withErrors(['unique' =>'User Already Registered']);
+            }
+        }
+
+        $request->validate([
+            "username" => "required",
+            "password" => "required | min:8 | regex:/[a-z]/ | regex:/[A-Z]/ | regex:/[0-9]/",
+            "confirmation"=> "required | same:password",
+            "email"=> "required | email",
+            "fullname"=> "required|regex:/^[a-zA-Z ]+$/",
+            "address"=> "required | regex:/[a-z]/ | regex:/[A-Z]/ | regex:/[0-9]/",
+            "description"=> "required_if:vendor,on"
+
+        ]);
+
+
+
         if ($password != $confirm) {
-            return redirect()->back()->withInput()->withErrors(['Bisa cek error dan return variable, tapi function ->withInput() tidak mau']);
+            //return redirect()->back()->withInput()->withErrors(['Bisa cek error dan return variable, tapi function ->withInput() tidak mau']);
         }
         else {
-
-            $users = Cookie::get('users');
-            if ($users == null) {
-                $users = [];
-                $users = json_encode($users);
-            }
-
-            $users = json_decode($users);
-
-            foreach ($users as $user) {
-                if ($username == $user->username) {
-                    return redirect()->back()->withInput()->withErrors(['User Already Registered']);
-                }
-            }
-
 
 
             $users[] = (object)[
@@ -88,6 +104,11 @@ class LoginController extends Controller
 
     public function Login(Request $request)
     {
+        $request->validate([
+            "username" => "required",
+            "password" => "required"
+
+        ]);
 
         $username = $request->input("username");
         $password = $request->input("password");
@@ -109,13 +130,25 @@ class LoginController extends Controller
                 $id = $user->username;
                 if ($user->type == "vendor") {
                     if ($user->blocked == false) {
-                        return redirect()->route('vendor', ['id' => $id]);
+
+                        $con = "Not Yet Confirmed, Button Will Not Be Functioning";
+                        if($user->confirmation) {
+                            $con = "";
+                        }
+                        $user_now = json_encode($user);
+                        Cookie::queue('user_now', $user_now, 120);
+                        return redirect()->route('vendor', ['id' => $id])->withErrors(['con' => $con]);
                     }
 
                 }
                 else {
                     if ($user->blocked == false) {
-                        return redirect()->route('user', ['id' => $id]);
+
+                        $con = "true";
+
+                        $user_now = json_encode($user);
+                        Cookie::queue('user_now', $user_now, 120);
+                        return redirect()->route('user', ['id' => $id])->withErrors(['con' => $con]);
                     }
                 }
 
@@ -123,7 +156,13 @@ class LoginController extends Controller
             }
         }
 
-        return redirect('/login');
+        return redirect('/login')->withErrors(['unique' =>'Username or Password Incorrect']);;
+    }
+
+    public function Logout()
+    {
+        Cookie::queue(Cookie::forget('cart'));
+        return redirect('/login')->withCookie(Cookie::forget('user_now'));
     }
 
 }

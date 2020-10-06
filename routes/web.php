@@ -51,8 +51,13 @@ Route::group(['prefix' => 'admin'], function() {
 Route::group(['prefix' => 'menu'], function() {
     Route::any('/{id}', 'MenuController@MenuId')->name('user');
     Route::get('/manage', 'MenuController@Manage');
+    Route::post('/manage/id', 'MenuController@ManagingId');
     Route::any('/manage/{id}', 'MenuController@ManageId')->name('manage');
 });
+
+Route::any('/logout', 'LoginController@Logout');
+
+Route::post('/addtocart', 'CartController@AddToCart');
 
 
 

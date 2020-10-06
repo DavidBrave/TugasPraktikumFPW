@@ -101,12 +101,19 @@
 
 @extends('layouts.app')
 @section('content')
+
+@error('unique')
+    <h2 style="color: #a60c0c; text-align: center">{{$message}}</h2>
+@enderror
+
 <div class="login-page">
     <div class="form">
       <form class="login-form" method="POST">
           @csrf
         <input type="text" placeholder="username" name="username"/>
+        @error('username') <br> <span style="color: #a60c0c">{{ $message }}</span> <br> @enderror
         <input type="password" placeholder="password" name="password"/>
+        @error('password') <br> <span style="color: #a60c0c">{{ $message }}</span> <br> @enderror
         <button onclick="ClickLogin()">login</button>
         <p class="message">Don't Have An Account Yet? <a href="/register">Create an account</a></p>
       </form>

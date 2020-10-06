@@ -21,11 +21,46 @@
         }
 
 
+        button {
+            background:#d7ebfa;
+            border: 3px solid #232F34;
+            color: black;
+            width: 180px;
+            height: 30px;
+            font-size: 12pt;
+            border-radius: 10px;
+            transition: all 0.175s ease-in-out;
+            margin: 10px;
+        }
+        button:hover {
+            transition: all 0.175s ease-in-out;
+            border : 3px double black;
+            background: #677f8f;
+            color: whitesmoke;
+        }
+
+
 
     </style>
 
 </head>
 <body>
+
+
+
+    @error('con')
+    @if ($message != "")
+    <h2 style="color: #a60c0c; text-align: center">{{$message}}</h2>
+    @endif
+    @enderror
+
+    <a href="@isset($vendor)
+        {{ url('/menu/manage/' . $vendor->username) }}
+    @endisset "><button>Menu Managment</button></a>
+    <button onclick="window.location.href='/vendor'">List Vendor</button>
+    <button >Transaction History</button>
+    <button onclick="window.location.href='/logout'" style="float: right">Logout</button>
+
     @isset($vendor)
     <h1>Vendor {{ $vendor->fullname }} </h1>
 
@@ -35,10 +70,7 @@
 
     @endisset
 
-    <button >Menu Managment</button>
-    <button onclick="window.location.href='/vendor'">List Vendor</button>
-    <button >Transaction History</button>
-    <button onclick="window.location.href='/login'">Logout</button>
+
 
 </body>
 </html>

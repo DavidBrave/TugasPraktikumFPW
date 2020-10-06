@@ -154,9 +154,10 @@
 <body>
 
 
-    @if($errors->any())
-        <h2 style="color: #a60c0c; text-align: center">{{$errors->first()}}</h2>
-    @endif
+    @error('unique')
+    <h2 style="color: #a60c0c; text-align: center">{{$message}}</h2>
+    @enderror
+
 
 
     <div class="register-page">
@@ -164,12 +165,18 @@
     <form class="register-form" method="POST" action="/register">
 
         @csrf
-        <input type="text" placeholder="username" name="username"/>
+        <input type="text" placeholder="username" name="username" value="{{ old('username') }}"/>
+        @error('username') <br> <span style="color: #a60c0c">{{ $message }}</span> <br> @enderror
         <input type="text" placeholder="email address" name="email"/>
+        @error('email') <br> <span style="color: #a60c0c">{{ $message }}</span> <br> @enderror
         <input type="text" placeholder="full name" name="fullname"/>
+        @error('fullname') <br> <span style="color: #a60c0c">{{ $message }}</span> <br> @enderror
         <input type="password" placeholder="password" name="password"/>
+        @error('password') <br> <span style="color: #a60c0c">{{ $message }}</span> <br> @enderror
         <input type="password" placeholder="confirm password" name="confirmation"/>
+        @error('confirmation') <br> <span style="color: #a60c0c">{{ $message }}</span> <br> @enderror
         <input type="text" placeholder="address" name="address"/> <br>
+        @error('address') <br> <span style="color: #a60c0c">{{ $message }}</span> <br> @enderror
 
         <div class="radio_form">
             <label for="radioButton_user" id="radio_button_user">
@@ -188,6 +195,7 @@
 
         {{-- <div id="text_deskripsi"> --}}
             <input id="text_deskripsi" type="text" name="description" placeholder="Description"/>
+            @error('description') <br> <span style="color: #a60c0c">{{ $message }}</span> <br> @enderror
         {{-- </div> --}}
 
         <button>Register</button>
